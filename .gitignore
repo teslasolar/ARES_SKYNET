@@ -1,0 +1,74 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build outputs
+build/
+dist/
+*.o
+*.so
+*.dll
+*.exe
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+*.egg-info/
+
+# C/C++
+*.d
+*.slo
+*.lo
+*.obj
+*.gch
+*.pch
+*.lib
+*.a
+*.la
+*.lai
+*.so.*
+*.dylib
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Documentation builds
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# Simulation data
+*.sim
+*.flight
+simulation/output/
+
+# Sensitive data
+*.key
+*.pem
+*.cert
+config/secrets/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~

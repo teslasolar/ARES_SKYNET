@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARES: AI Retrofit Enhancement System for Fighter Aircraft</title>
+    <meta name="description" content="Open-source AI mechanical retrofit system for fighter jets addressing pilot shortages while preserving human oversight and safety.">
+    <meta name="author" content="Thomas - ChooChoo69420">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a237e;
+            --secondary: #0d47a1;
+            --accent: #ff6f00;
+            --success: #00c853;
+            --warning: #ff6f00;
+            --danger: #d50000;
+            --light: #f5f5f5;
+            --dark: #212121;
+            --text: #212121;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: #ffffff;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.1"><path d="M20 50 L180 50 M20 100 L180 100 M20 150 L180 150" stroke="white" stroke-width="0.5"/><circle cx="50" cy="50" r="20" fill="none" stroke="white" stroke-width="0.5"/><circle cx="150" cy="150" r="20" fill="none" stroke="white" stroke-width="0.5"/><path d="M100 20 L120 80 L80 80 Z" fill="white" opacity="0.3"/></svg>') repeat;
+            background-size: 200px 200px;
+            animation: slide 20s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(200px); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .acronym {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .classification {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+        }
+
+        .nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            background: linear-gradient(135deg, var(--light) 0%, #e3f2fd 100%);
+            padding: 3rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            border-left: 5px solid var(--primary);
+        }
+
+        .executive-summary h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: var(--primary);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Content Sections */
+        .section {
+            margin: 5rem 0;
+        }
+
+        .section h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section h3 {
+            color: var(--secondary);
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Technical Diagram */
+        .diagram-container {
+            background: var(--light);
+            padding: 3rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .diagram-svg {
+            max-width: 800px;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            color: #e65100;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            border: 1px solid #64b5f6;
+            color: #0d47a1;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border: 1px solid #66bb6a;
+            color: #1b5e20;
+        }
+
+        .alert-danger {
+            background: #ffebee;
+            border: 1px solid #ef5350;
+            color: #b71c1c;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Tables */
+        .data-table {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin: 3rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-item:nth-child(odd) {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            text-align: left;
+        }
+
+        .timeline-content {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            width: 45%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border: 4px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 5rem;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .title-container {
+                flex-direction: column;
+            }
+
+            .nav-content {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                justify-content: flex-start !important;
+                text-align: left !important;
+                margin-left: 40px;
+            }
+
+            .timeline-content {
+                width: calc(100% - 40px);
+            }
+
+            .timeline-dot {
+                left: 20px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav {
+                display: none;
+            }
+
+            .header {
+                background: white;
+                color: black;
+            }
+
+            .alert {
+                border: 2px solid black;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="title-container">
+                <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="white" stroke-width="2" opacity="0.5"/>
+                    <circle cx="50" cy="50" r="25" fill="none" stroke="white" stroke-width="2" opacity="0.7"/>
+                    <path d="M50 20 L65 40 L60 40 L60 60 L40 60 L40 40 L35 40 Z" fill="white"/>
+                    <circle cx="50" cy="50" r="5" fill="white"/>
+                    <path d="M20 50 L30 50 M70 50 L80 50 M50 20 L50 30 M50 70 L50 80" stroke="white" stroke-width="2"/>
+                </svg>
+                <h1>ARES</h1>
+            </div>
+            <p class="acronym">AI Retrofit Enhancement System</p>
+            <p class="subtitle">
+                Open-source mechanical retrofit system enabling AI-assisted flight operations for existing fighter aircraft, 
+                addressing critical pilot shortages while maintaining human oversight and command authority
+            </p>
+            <span class="classification">UNCLASSIFIED // OPEN SOURCE</span>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="#summary">Executive Summary</a>
+            <a href="#problem">Problem Statement</a>
+            <a href="#strategic">Strategic Implications</a>
+            <a href="#solution">Technical Solution</a>
+            <a href="#architecture">System Architecture</a>
+            <a href="#safety">Safety Systems</a>
+            <a href="#interface">Human Interface</a>
+            <a href="#implementation">Implementation</a>
+            <a href="#ethics">Ethics & Compliance</a>
+            <a href="#cost">Cost Analysis</a>
+            <a href="#timeline">Timeline</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Alert -->
+        <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <div>
+                <strong>Open Source Notice:</strong> This project focuses on defensive capabilities and pilot safety augmentation. 
+                All designs emphasize human oversight, comply with international law, and cannot enable fully autonomous weapons systems.
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <section class="executive-summary" id="summary">
+            <h2>Executive Summary</h2>
+            <p>
+                <strong style="color: var(--danger);">CRITICAL READINESS FAILURE:</strong> The United States faces a catastrophic 12,000 pilot deficit, 
+                leaving 74% of our military aircraft effectively grounded. Without immediate action, we cannot maintain air superiority. 
+                ARES provides an emergency retrofit solution that transforms our existing aircraft into semi-autonomous defensive platforms:
+            </p>
+            <ul style="margin: 1.5rem 0; padding-left: 2rem;">
+                <li>Single-pilot operation of traditionally two-seat aircraft</li>
+                <li>Reduced pilot workload by 60-70% during routine operations</li>
+                <li>Enhanced survivability through AI threat detection and evasion</li>
+                <li>Graduated autonomy based on threat level and command authorization</li>
+                <li>Backwards compatibility with existing F-15, F-16, and F/A-18 platforms</li>
+            </ul>
+            <p>
+                <strong>Strategic Reality:</strong> Our enemies know we have 14,486 aircraft but only pilots for 26% of them. 
+                ARES can activate our dormant fleet in 48-72 hours per aircraft at $3M per unit. The alternative is 
+                accepting defeat through inaction—a luxury we cannot afford when facing peer adversaries with numerical advantages.
+            </p>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">✈️</div>
+                <div class="stat-value">14,486</div>
+                <div class="stat-label">US Military Aircraft</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👨‍✈️</div>
+                <div class="stat-value" style="color: #d50000;">-12,000</div>
+                <div class="stat-label">CRITICAL Pilot Deficit</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📉</div>
+                <div class="stat-value">26%</div>
+                <div class="stat-label">Force Readiness</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value">$3M</div>
+                <div class="stat-label">Per Unit Cost</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value">72hrs</div>
+                <div class="stat-label">Installation Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛡️</div>
+                <div class="stat-value">3x</div>
+                <div class="stat-label">Survivability Increase</div>
+            </div>
+        </div>
+
+        <!-- Problem Statement -->
+        <section class="section" id="problem">
+            <h2>
+                <div class="section-icon">⚠️</div>
+                Problem Statement
+            </h2>
+            
+            <p>
+                The United States Air Force faces a convergence of critical challenges that threaten air superiority capabilities:
+            </p>
+
+            <h3>Pilot Shortage Crisis</h3>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service Branch</th>
+                            <th>Required Pilots</th>
+                            <th>Current Pilots</th>
+                            <th>Shortage</th>
+                            <th>% Deficit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Air Force</td>
+                            <td>21,000</td>
+                            <td>18,900</td>
+                            <td>2,100</td>
+                            <td>10%</td>
+                        </tr>
+                        <tr>
+                            <td>Navy/Marines</td>
+                            <td>11,500</td>
+                            <td>10,200</td>
+                            <td>1,300</td>
+                            <td>11.3%</td>
+                        </tr>
+                        <tr>
+                            <td>Army Aviation</td>
+                            <td>15,000</td>
+                            <td>13,400</td>
+                            <td>1,600</td>
+                            <td>10.7%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td><strong>47,500</strong></td>
+                            <td><strong>42,500</strong></td>
+                            <td><strong>5,000</strong></td>
+                            <td><strong>10.5%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Contributing Factors</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💸</div>
+                    <h4 class="feature-title">Commercial Competition</h4>
+                    <p>Airlines offer 2-3x military pilot salaries with better work-life balance</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h4 class="feature-title">Training Timeline</h4>
+                    <p>2-3 years to train a combat-ready fighter pilot at $5.6M cost</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h4 class="feature-title">Retention Issues</h4>
+                    <p>Only 35% of pilots remain past initial service commitment</p>
+                </div>
+            </div>
+
+            <div class="alert alert-danger">
+                <span class="alert-icon">🚨</span>
+                <div>
+                    <strong>Critical Impact:</strong> Current pilot shortage results in reduced readiness, 
+                    increased operational tempo for remaining pilots, and inability to fully utilize aircraft inventory. 
+                    Without intervention, the gap will widen to 8,000+ by 2030.
+                </div>
+            </div>
+        </section>
+
+        <!-- Strategic Implications -->
+        <section class="section" id="strategic">
+            <h2>
+                <div class="section-icon">🎯</div>
+                Strategic Implications of Inaction
+            </h2>
+            
+            <div class="alert alert-danger">
+                <span class="alert-icon">🚨</span>
+                <div>
+                    <strong>Adversary Knowledge:</strong> China and Russia are fully aware of our pilot shortage. 
+                    They know that 10,000+ of our aircraft are essentially expensive hangar decorations. 
+                    Every day we delay addressing this multiplies their strategic advantage.
+                </div>
+            </div>
+
+            <h3>The Mathematics of Air Superiority</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--danger);">🇨🇳</div>
+                    <h4 class="feature-title">China's Advantage</h4>
+                    <p>
+                        3,304 aircraft with sufficient pilots vs our 26% readiness rate. 
+                        In a Pacific conflict, they could achieve 4:1 local superiority despite our larger fleet.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--danger);">🇷🇺</div>
+                    <h4 class="feature-title">Russia's Calculation</h4>
+                    <p>
+                        4,221 aircraft they can actually fly. They know we can't sustain 
+                        multi-theater operations with our current pilot deficit.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--warning);">⏰</div>
+                    <h4 class="feature-title">Time Criticality</h4>
+                    <p>
+                        Training new pilots: 3 years minimum. Installing ARES: 72 hours. 
+                        Every month of delay = 1,000 aircraft remaining unusable.
+                    </p>
+                </div>
+            </div>
+
+            <h3>Defensive Imperative</h3>
+            <p style="font-size: 1.2rem; margin: 2rem 0;">
+                This isn't about creating killer robots—it's about ensuring our existing defensive assets 
+                can actually defend. A grounded F-16 protects nothing. An F-16 with ARES can at least 
+                patrol our airspace, intercept threats, and buy time for human pilots to respond to 
+                critical situations.
+            </p>
+
+            <div class="diagram-container">
+                <svg class="diagram-svg" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Title -->
+                    <text x="400" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a237e">Force Multiplication Through ARES</text>
+                    
+                    <!-- Current State -->
+                    <text x="200" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#d50000">Current Reality</text>
+                    <rect x="100" y="90" width="200" height="100" fill="#ffebee" stroke="#d50000" stroke-width="2" rx="5"/>
+                    <text x="200" y="120" text-anchor="middle" font-size="12" fill="#d50000">2,100 Combat Capable</text>
+                    <text x="200" y="140" text-anchor="middle" font-size="12" fill="#d50000">Aircraft/Pilot Pairs</text>
+                    <text x="200" y="170" text-anchor="middle" font-size="20" font-weight="bold" fill="#d50000">26%</text>
+                    
+                    <!-- Arrow -->
+                    <path d="M320 140 L380 140" stroke="#333" stroke-width="3" marker-end="url(#arrowhead)"/>
+                    <text x="350" y="130" text-anchor="middle" font-size="12" fill="#333">ARES</text>
+                    
+                    <!-- With ARES -->
+                    <text x="500" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#00c853">With ARES</text>
+                    <rect x="400" y="90" width="200" height="100" fill="#e8f5e9" stroke="#00c853" stroke-width="2" rx="5"/>
+                    <text x="500" y="120" text-anchor="middle" font-size="12" fill="#00c853">14,486 Defensive</text>
+                    <text x="500" y="140" text-anchor="middle" font-size="12" fill="#00c853">Capable Aircraft</text>
+                    <text x="500" y="170" text-anchor="middle" font-size="20" font-weight="bold" fill="#00c853">100%</text>
+                    
+                    <!-- Bottom text -->
+                    <text x="400" y="250" text-anchor="middle" font-size="14" fill="#666">Human pilots focus on offensive operations</text>
+                    <text x="400" y="270" text-anchor="middle" font-size="14" fill="#666">AI handles defensive patrol and intercept</text>
+                    <text x="400" y="290" text-anchor="middle" font-size="14" fill="#666">Full fleet activation within 6 months</text>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Technical Solution -->
+        <section class="section" id="solution">
+            <h2>
+                <div class="section-icon">🔧</div>
+                Technical Solution
+            </h2>
+
+            <p>
+                ARES implements a modular AI co-pilot system that integrates with existing aircraft systems through 
+                mechanical and electrical interfaces, requiring no fundamental airframe modifications.
+            </p>
+
+            <h3>Core Components</h3>
+            <div class="diagram-container">
+                <svg class="diagram-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Aircraft outline -->
+                    <path d="M200 300 L600 300 L650 280 L650 320 L600 300" fill="#e0e0e0" stroke="#666" stroke-width="2"/>
+                    <path d="M350 300 L350 200 L400 150 L450 200 L450 300" fill="#e0e0e0" stroke="#666" stroke-width="2"/>
+                    <path d="M350 300 L350 400 L400 450 L450 400 L450 300" fill="#e0e0e0" stroke="#666" stroke-width="2"/>
+                    
+                    <!-- Components -->
+                    <!-- Central AI Unit -->
+                    <rect x="350" y="270" width="100" height="60" fill="#1a237e" rx="5"/>
+                    <text x="400" y="305" text-anchor="middle" fill="white" font-size="12" font-weight="bold">AI Core</text>
+                    
+                    <!-- Sensor Suite -->
+                    <circle cx="500" cy="300" r="30" fill="#0d47a1"/>
+                    <text x="500" y="305" text-anchor="middle" fill="white" font-size="10">Sensors</text>
+                    
+                    <!-- Control Interface -->
+                    <rect x="250" y="280" width="80" height="40" fill="#ff6f00" rx="5"/>
+                    <text x="290" y="305" text-anchor="middle" fill="white" font-size="10">Interface</text>
+                    
+                    <!-- Power Unit -->
+                    <rect x="470" y="340" width="60" height="40" fill="#00c853" rx="5"/>
+                    <text x="500" y="365" text-anchor="middle" fill="white" font-size="10">Power</text>
+                    
+                    <!-- Connections -->
+                    <path d="M330 300 L350 300" stroke="#333" stroke-width="2"/>
+                    <path d="M450 300 L470 300" stroke="#333" stroke-width="2"/>
+                    <path d="M400 330 L400 340 L470 340" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Labels -->
+                    <text x="400" y="100" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a237e">ARES System Architecture</text>
+                    
+                    <!-- Component descriptions -->
+                    <text x="200" y="450" font-size="12" fill="#666">• AI Core: NVIDIA Jetson AGX Orin (275 TOPS)</text>
+                    <text x="200" y="470" font-size="12" fill="#666">• Sensors: LIDAR, Radar, IR, Enhanced GPS</text>
+                    <text x="200" y="490" font-size="12" fill="#666">• Interface: MIL-STD-1553B/1760 Compatible</text>
+                    <text x="200" y="510" font-size="12" fill="#666">• Power: Independent 28VDC with backup battery</text>
+                </svg>
+            </div>
+
+            <h3>Key Technologies</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h4 class="feature-title">Neural Processing Unit</h4>
+                    <p>
+                        NVIDIA Jetson AGX Orin provides 275 TOPS of AI compute power, 
+                        enabling real-time threat assessment, navigation, and tactical planning.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👁️</div>
+                    <h4 class="feature-title">Sensor Fusion</h4>
+                    <p>
+                        Integrates LIDAR, radar, IR, and optical sensors for 360° situational awareness, 
+                        with AI-powered target identification and tracking.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h4 class="feature-title">Fly-by-Wire Integration</h4>
+                    <p>
+                        Interfaces with existing flight control systems through MIL-STD-1553B bus, 
+                        enabling smooth handoff between human and AI control.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h4 class="feature-title">Secure Communications</h4>
+                    <p>
+                        Quantum-resistant encryption for all AI decision-making processes, 
+                        with isolated networks preventing external compromise.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4 class="feature-title">Redundant Power</h4>
+                    <p>
+                        Independent power system with 2-hour battery backup ensures operation 
+                        even during complete aircraft electrical failure.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h4 class="feature-title">Rapid Deployment</h4>
+                    <p>
+                        Modular design allows installation in standard maintenance bays 
+                        without specialized equipment or airframe modifications.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Architecture -->
+        <section class="section" id="architecture">
+            <h2>
+                <div class="section-icon">🏗️</div>
+                System Architecture
+            </h2>
+
+            <h3>Operational Modes</h3>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>AI Authority</th>
+                            <th>Human Role</th>
+                            <th>Use Case</th>
+                            <th>Override Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Manual</strong></td>
+                            <td>Advisory only</td>
+                            <td>Full control</td>
+                            <td>Normal operations</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Assisted</strong></td>
+                            <td>Co-pilot functions</td>
+                            <td>Primary control</td>
+                            <td>Complex missions</td>
+                            <td>< 0.5 sec</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Autonomous</strong></td>
+                            <td>Flight control</td>
+                            <td>Mission commander</td>
+                            <td>Transit/patrol</td>
+                            <td>< 1.0 sec</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Emergency</strong></td>
+                            <td>Life preservation</td>
+                            <td>Incapacitated</td>
+                            <td>Pilot injury/G-LOC</td>
+                            <td>Voice command</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Decision Authority Matrix</h3>
+            <div class="alert alert-warning">
+                <span class="alert-icon">⚡</span>
+                <div>
+                    <strong>Graduated Weapons Authority:</strong> AI weapons employment follows strict escalation protocols:
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li><strong>Level 1:</strong> Human authorization required for all offensive actions (peacetime)</li>
+                        <li><strong>Level 2:</strong> AI may return fire when attacked (self-defense)</li>
+                        <li><strong>Level 3:</strong> AI authorized for defensive engagement of confirmed hostiles</li>
+                        <li><strong>Level 4:</strong> Full defensive autonomy during overwhelming attack scenarios</li>
+                    </ul>
+                    Command sets authorization level based on threat environment.
+                </div>
+            </div>
+
+            <div class="feature-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--success);">✅</div>
+                    <h4 class="feature-title">AI Authorized Actions</h4>
+                    <ul style="text-align: left; padding-left: 1.5rem;">
+                        <li>Navigation and route planning</li>
+                        <li>Collision avoidance</li>
+                        <li>Formation flying</li>
+                        <li>Sensor management</li>
+                        <li>Communications handling</li>
+                        <li>Emergency return-to-base</li>
+                        <li>Defensive countermeasures</li>
+                        <li>Fuel management</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--danger);">🚫</div>
+                    <h4 class="feature-title">Human-Priority Actions</h4>
+                    <ul style="text-align: left; padding-left: 1.5rem;">
+                        <li>First-strike authorization</li>
+                        <li>Civilian area engagement</li>
+                        <li>Border/airspace violations</li>
+                        <li>Surrender negotiations</li>
+                        <li>Political considerations</li>
+                        <li>De-escalation decisions</li>
+                        <li>Allied force coordination</li>
+                        <li>Nuclear weapon systems*</li>
+                    </ul>
+                    <small style="display: block; margin-top: 1rem; opacity: 0.8;">*Nuclear systems remain physically isolated from AI</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Safety Systems -->
+        <section class="section" id="safety">
+            <h2>
+                <div class="section-icon">🛡️</div>
+                Safety & Redundancy Systems
+            </h2>
+
+            <p>
+                ARES implements multiple independent safety layers to ensure system reliability and prevent 
+                unauthorized autonomous actions.
+            </p>
+
+            <h3>Triple-Redundant Safety Architecture</h3>
+            <div class="diagram-container">
+                <svg class="diagram-svg" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Primary System -->
+                    <rect x="100" y="50" width="150" height="80" fill="#1a237e" rx="10"/>
+                    <text x="175" y="95" text-anchor="middle" fill="white" font-weight="bold">Primary AI</text>
+                    
+                    <!-- Secondary System -->
+                    <rect x="100" y="160" width="150" height="80" fill="#0d47a1" rx="10"/>
+                    <text x="175" y="205" text-anchor="middle" fill="white" font-weight="bold">Backup AI</text>
+                    
+                    <!-- Watchdog -->
+                    <rect x="100" y="270" width="150" height="80" fill="#ff6f00" rx="10"/>
+                    <text x="175" y="315" text-anchor="middle" fill="white" font-weight="bold">Watchdog</text>
+                    
+                    <!-- Voting Logic -->
+                    <rect x="350" y="160" width="100" height="80" fill="#00c853" rx="10"/>
+                    <text x="400" y="190" text-anchor="middle" fill="white" font-size="12">Voting</text>
+                    <text x="400" y="210" text-anchor="middle" fill="white" font-size="12">Logic</text>
+                    
+                    <!-- Output -->
+                    <rect x="550" y="160" width="150" height="80" fill="#1a237e" rx="10"/>
+                    <text x="625" y="205" text-anchor="middle" fill="white" font-weight="bold">Flight Controls</text>
+                    
+                    <!-- Connections -->
+                    <path d="M250 90 L350 200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <path d="M250 200 L350 200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <path d="M250 310 L350 200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <path d="M450 200 L550 200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Kill Switch -->
+                    <rect x="350" y="50" width="100" height="40" fill="#d50000" rx="5"/>
+                    <text x="400" y="75" text-anchor="middle" fill="white" font-weight="bold">KILL SWITCH</text>
+                    <path d="M400 90 L400 160" stroke="#d50000" stroke-width="3" stroke-dasharray="5,5"/>
+                    
+                    <!-- Arrow marker -->
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <h3>Safety Features</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--danger);">🔴</div>
+                    <h4 class="feature-title">Physical Kill Switch</h4>
+                    <p>
+                        Hardwired disconnect accessible to pilot that immediately reverts to full manual control. 
+                        Cannot be overridden by software.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--warning);">⚡</div>
+                    <h4 class="feature-title">Automatic Failsafe</h4>
+                    <p>
+                        System automatically disengages if conflicting commands detected or if pilot 
+                        input exceeds AI recommendations by 30%.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: var(--success);">🔒</div>
+                    <h4 class="feature-title">Geofencing</h4>
+                    <p>
+                        Hard-coded boundaries prevent AI from entering restricted airspace or 
+                        violating international borders without explicit override.
+                    </p>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <span class="alert-icon">ℹ️</span>
+                <div>
+                    <strong>Certification Compliance:</strong> System designed to meet DO-178C Level A software standards 
+                    and MIL-HDBK-516C airworthiness requirements. Independent safety assessment by NAVAIR/AFMC required.
+                </div>
+            </div>
+        </section>
+
+        <!-- Human Interface -->
+        <section class="section" id="interface">
+            <h2>
+                <div class="section-icon">👨‍✈️</div>
+                Human-Machine Interface
+            </h2>
+
+            <p>
+                The pilot interface emphasizes intuitive control and clear system status indication, 
+                building on familiar cockpit conventions while adding AI-specific elements.
+            </p>
+
+            <h3>Cockpit Integration</h3>
+            <div class="diagram-container">
+                <svg class="diagram-svg" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- HUD Display -->
+                    <rect x="200" y="50" width="400" height="300" fill="#000" stroke="#666" stroke-width="2" rx="10"/>
+                    
+                    <!-- HUD Elements -->
+                    <!-- Horizon line -->
+                    <line x1="200" y1="200" x2="600" y2="200" stroke="#0f0" stroke-width="2"/>
+                    
+                    <!-- AI Status -->
+                    <rect x="220" y="70" width="120" height="40" fill="rgba(0,255,0,0.2)" stroke="#0f0" stroke-width="1" rx="5"/>
+                    <text x="280" y="95" text-anchor="middle" fill="#0f0" font-size="14" font-weight="bold">AI: ACTIVE</text>
+                    
+                    <!-- Threat Indicators -->
+                    <circle cx="500" cy="150" r="30" fill="none" stroke="#ff0" stroke-width="2" stroke-dasharray="5,5"/>
+                    <text x="500" y="155" text-anchor="middle" fill="#ff0" font-size="12">THREAT</text>
+                    
+                    <!-- Flight Path -->
+                    <path d="M400 250 Q 450 200, 500 200" fill="none" stroke="#0ff" stroke-width="2"/>
+                    
+                    <!-- Control Panel -->
+                    <rect x="200" y="380" width="400" height="100" fill="#333" stroke="#666" stroke-width="2" rx="10"/>
+                    
+                    <!-- Mode Selector -->
+                    <circle cx="250" cy="430" r="25" fill="#666" stroke="#999" stroke-width="2"/>
+                    <text x="250" y="435" text-anchor="middle" fill="white" font-size="10">MODE</text>
+                    
+                    <!-- Status Lights -->
+                    <circle cx="350" cy="420" r="10" fill="#0f0"/>
+                    <text x="350" y="445" text-anchor="middle" fill="#999" font-size="10">SYS OK</text>
+                    
+                    <circle cx="400" cy="420" r="10" fill="#0f0"/>
+                    <text x="400" y="445" text-anchor="middle" fill="#999" font-size="10">LINK</text>
+                    
+                    <circle cx="450" cy="420" r="10" fill="#ff0"/>
+                    <text x="450" y="445" text-anchor="middle" fill="#999" font-size="10">OVERRIDE</text>
+                    
+                    <!-- Kill Switch -->
+                    <rect x="520" y="410" width="60" height="40" fill="#d50000" stroke="#ff0000" stroke-width="2" rx="5"/>
+                    <text x="550" y="435" text-anchor="middle" fill="white" font-size="12" font-weight="bold">KILL</text>
+                </svg>
+            </div>
+
+            <h3>Voice Command System</h3>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Function</th>
+                            <th>Confirmation Required</th>
+                            <th>Response Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>"ARES, take control"</td>
+                            <td>Engage autopilot</td>
+                            <td>Yes</td>
+                            <td>< 1 sec</td>
+                        </tr>
+                        <tr>
+                            <td>"Manual override"</td>
+                            <td>Disengage AI</td>
+                            <td>No</td>
+                            <td>Immediate</td>
+                        </tr>
+                        <tr>
+                            <td>"Emergency return"</td>
+                            <td>RTB procedure</td>
+                            <td>Yes</td>
+                            <td>< 2 sec</td>
+                        </tr>
+                        <tr>
+                            <td>"Threat analysis"</td>
+                            <td>Tactical assessment</td>
+                            <td>No</td>
+                            <td>< 3 sec</td>
+                        </tr>
+                        <tr>
+                            <td>"Formation [position]"</td>
+                            <td>Adjust formation</td>
+                            <td>No</td>
+                            <td>< 2 sec</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Implementation Plan -->
+        <section class="section" id="implementation">
+            <h2>
+                <div class="section-icon">📋</div>
+                Implementation Strategy
+            </h2>
+
+            <h3>Phased Rollout</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Phase 1: Development (6 months)</h4>
+                        <p>Prototype development and ground testing on F-16 simulator</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Phase 2: Flight Testing (12 months)</h4>
+                        <p>Test squadron evaluation at Edwards AFB</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Phase 3: Limited Deployment (6 months)</h4>
+                        <p>100 aircraft retrofit in Air National Guard units</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Phase 4: Full Production (Ongoing)</h4>
+                        <p>1,000+ aircraft per year production capacity</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Compatible Aircraft</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✈️</div>
+                    <h4 class="feature-title">F-16 Fighting Falcon</h4>
+                    <p>Primary testbed platform. 900+ aircraft eligible for retrofit.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✈️</div>
+                    <h4 class="feature-title">F-15 Eagle/Strike Eagle</h4>
+                    <p>Ideal for two-seat to single-seat conversion. 400+ aircraft.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✈️</div>
+                    <h4 class="feature-title">F/A-18 Super Hornet</h4>
+                    <p>Navy integration with carrier landing capability. 600+ aircraft.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ethics & Compliance -->
+        <section class="section" id="ethics">
+            <h2>
+                <div class="section-icon">⚖️</div>
+                Ethics & Legal Compliance
+            </h2>
+
+            <div class="alert alert-info">
+                <span class="alert-icon">📜</span>
+                <div>
+                    <strong>International Law Compliance:</strong> ARES design specifically adheres to:
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li>Law of Armed Conflict (LOAC)</li>
+                        <li>DOD Directive 3000.09 on Autonomous Weapons</li>
+                        <li>NATO STANAG 4586 for UAV Control</li>
+                        <li>Geneva Convention protocols</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Ethical Safeguards</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h4 class="feature-title">Human-in-the-Loop</h4>
+                    <p>
+                        All lethal decisions require positive human action. AI cannot independently 
+                        select or engage targets.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h4 class="feature-title">Audit Trail</h4>
+                    <p>
+                        Complete logging of all AI decisions and recommendations for post-mission 
+                        analysis and accountability.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚫</div>
+                    <h4 class="feature-title">Graduated Response</h4>
+                    <p>
+                        System autonomy scales with threat level. Peacetime requires human authorization, 
+                        but under attack, AI can defend itself and nearby assets within strict ROE.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cost Analysis -->
+        <section class="section" id="cost">
+            <h2>
+                <div class="section-icon">💰</div>
+                Cost-Benefit Analysis
+            </h2>
+
+            <h3>Investment Comparison</h3>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Solution</th>
+                            <th>Unit Cost</th>
+                            <th>Time to Deploy</th>
+                            <th>Capability Gain</th>
+                            <th>10-Year TCO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ARES Retrofit</strong></td>
+                            <td>$3M</td>
+                            <td>72 hours</td>
+                            <td>70% workload reduction</td>
+                            <td>$5M</td>
+                        </tr>
+                        <tr>
+                            <td>New Pilot Training</td>
+                            <td>$5.6M</td>
+                            <td>2-3 years</td>
+                            <td>1 qualified pilot</td>
+                            <td>$12M</td>
+                        </tr>
+                        <tr>
+                            <td>New F-35A</td>
+                            <td>$80M</td>
+                            <td>2-4 years</td>
+                            <td>1 aircraft + pilot needed</td>
+                            <td>$150M</td>
+                        </tr>
+                        <tr>
+                            <td>Foreign Pilot Program</td>
+                            <td>$2M/year</td>
+                            <td>6-12 months</td>
+                            <td>Limited availability</td>
+                            <td>$20M</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Return on Investment</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-value">250%</div>
+                    <div class="stat-label">5-Year ROI</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✈️</div>
+                    <div class="stat-value">3,000</div>
+                    <div class="stat-label">Aircraft Enabled</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-value">$16.8B</div>
+                    <div class="stat-label">Cost Avoidance</div>
+                </div>
+            </div>
+
+            <div class="alert alert-success">
+                <span class="alert-icon">✅</span>
+                <div>
+                    <strong>Budget Impact:</strong> ARES program could address the entire pilot shortage for less than 
+                    the cost of 100 new F-35s, while maintaining human oversight and improving pilot survivability.
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section" id="timeline">
+            <h2>
+                <div class="section-icon">📅</div>
+                Development Timeline
+            </h2>
+
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Milestone</th>
+                            <th>Duration</th>
+                            <th>Key Deliverables</th>
+                            <th>Success Criteria</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Q1-Q2 2025</strong></td>
+                            <td>6 months</td>
+                            <td>Prototype development</td>
+                            <td>Successful simulator integration</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q3 2025 - Q2 2026</strong></td>
+                            <td>12 months</td>
+                            <td>Flight testing program</td>
+                            <td>500+ flight hours without critical failure</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q3 2026</strong></td>
+                            <td>3 months</td>
+                            <td>Certification</td>
+                            <td>NAVAIR/AFMC approval</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q4 2026</strong></td>
+                            <td>3 months</td>
+                            <td>Initial production</td>
+                            <td>First 50 units delivered</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2027-2030</strong></td>
+                            <td>3 years</td>
+                            <td>Full deployment</td>
+                            <td>3,000+ aircraft equipped</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="section">
+            <div class="alert alert-success">
+                <span class="alert-icon">🚀</span>
+                <div>
+                    <strong>Open Source Contribution:</strong> This design is released under MIT License to enable 
+                    rapid development and deployment. Defense contractors, academic institutions, and allied nations 
+                    are encouraged to contribute improvements while maintaining ethical safeguards.
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <h3>Repository Structure</h3>
+                <pre style="background: var(--light); padding: 2rem; border-radius: 10px; text-align: left; display: inline-block;">
+ai-fighter-retrofit/
+├── hardware/
+│   ├── compute-module/
+│   ├── sensor-suite/
+│   └── power-systems/
+├── software/
+│   ├── flight-control/
+│   ├── threat-detection/
+│   └── pilot-interface/
+├── documentation/
+│   ├── installation-guide/
+│   ├── safety-protocols/
+│   └── certification-requirements/
+└── simulation/
+    ├── x-plane-plugin/
+    └── test-scenarios/
+                </pre>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>
+            © 2025 Thomas (@ChooChoo69420) | 
+            <a href="https://github.com/teslasolar/ai-fighter-retrofit">View on GitHub</a> | 
+            <a href="https://twitter.com/ChooChoo69420">Follow on Twitter</a>
+        </p>
+        <p style="margin-top: 1rem; opacity: 0.8;">
+            ARES: Because a grounded F-16 is just expensive scrap metal. With a 12,000 pilot deficit, 
+            the choice isn't between human and AI control—it's between AI-assisted defense and certain defeat.
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.6;">
+            This project is not affiliated with the Department of Defense. 
+            All information is based on publicly available sources.
+        </p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add active class to nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section, .executive-summary');
+            const navLinks = document.querySelectorAll('.nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.borderBottomColor = 'transparent';
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.style.borderBottomColor = '#1a237e';
+                }
+            });
+        });
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card, .feature-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
