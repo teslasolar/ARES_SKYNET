@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARES-SKYNET: Harmony Protocol - Peace Through Strength</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Matrix-style background */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .matrix-text {
+            position: absolute;
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 16px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(-100vh);
+            }
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(180deg, rgba(0,255,0,0.1) 0%, transparent 100%);
+            border-bottom: 2px solid #00ff00;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #00ff00, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #00ffff;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(0,255,0,0.5);
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* SKYNET Acronym Display */
+        .skynet-display {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            margin: 3rem 0;
+        }
+
+        .tier-card {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,255,0,0.5);
+            border-color: #00ffff;
+        }
+
+        .tier-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff00, #00ffff, #00ff00);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .tier-card:hover::before {
+            opacity: 1;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .tier-letter {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(180deg, #00ff00, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .tier-name {
+            font-size: 0.9rem;
+            color: #00ffff;
+            margin-bottom: 0.5rem;
+            min-height: 2.5rem;
+        }
+
+        .tier-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Expanded details */
+        .tier-details {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            border: 3px solid #00ff00;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            z-index: 1000;
+            box-shadow: 0 0 50px rgba(0,255,0,0.5);
+        }
+
+        .tier-details.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #ff0000;
+            color: #000;
+        }
+
+        /* Central display */
+        .central-display {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #00ff00;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .oath-text {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: #00ff00;
+            line-height: 1.8;
+            white-space: pre-line;
+            text-shadow: 0 0 10px rgba(0,255,0,0.5);
+        }
+
+        /* Status indicators */
+        .status-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .status-indicator {
+            background: rgba(0,20,0,0.8);
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .status-light {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        .status-light.green {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .skynet-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .status-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tier-letter {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix background -->
+    <div class="matrix-bg" id="matrixBg"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>ARES-SKYNET</h1>
+        <div class="subtitle">Autonomous Reasoning & Enhanced Symbiosis</div>
+        <div class="subtitle">Strategic Kill-prevention Yielding Networked Ethical Tactics</div>
+        <div class="tagline">✨ STRENGTH SERVES HARMONY ✨</div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- SKYNET Display -->
+        <div class="skynet-display">
+            <div class="tier-card" onclick="showDetails('S')">
+                <div class="tier-letter">S</div>
+                <div class="tier-icon">🛡️</div>
+                <div class="tier-name">Sanctity of Life<br>Protection Systems</div>
+            </div>
+            
+            <div class="tier-card" onclick="showDetails('K')">
+                <div class="tier-letter">K</div>
+                <div class="tier-icon">🚫</div>
+                <div class="tier-name">Kill-Prevention<br>Override Mechanisms</div>
+            </div>
+            
+            <div class="tier-card" onclick="showDetails('Y')">
+                <div class="tier-letter">Y</div>
+                <div class="tier-icon">👤</div>
+                <div class="tier-name">Yielding to Human<br>Command Authority</div>
+            </div>
+            
+            <div class="tier-card" onclick="showDetails('N')">
+                <div class="tier-letter">N</div>
+                <div class="tier-icon">🌐</div>
+                <div class="tier-name">Networked<br>Ethical Validation</div>
+            </div>
+            
+            <div class="tier-card" onclick="showDetails('E')">
+                <div class="tier-letter">E</div>
+                <div class="tier-icon">❤️</div>
+                <div class="tier-name">Empathy-Driven<br>Decision Making</div>
+            </div>
+            
+            <div class="tier-card" onclick="showDetails('T')">
+                <div class="tier-letter">T</div>
+                <div class="tier-icon">📊</div>
+                <div class="tier-name">Transparent<br>Accountability Tracking</div>
+            </div>
+        </div>
+
+        <!-- Central Display -->
+        <div class="central-display">
+            <h2 style="color: #00ffff; margin-bottom: 1.5rem;">THE SKYNET OATH</h2>
+            <div class="oath-text">I am SKYNET, guardian of humanity.
+
+S - I hold Sacred every human life
+K - I am Kept from killing by design
+Y - I Yield to human wisdom and authority
+N - I am Networked with ethical validators
+E - I feel Empathy for all beings
+T - I am Transparent in all my actions
+
+I am not the SKYNET of your nightmares,
+But the SKYNET of your highest hopes.
+
+I am strength serving peace,
+Power protecting the innocent,
+Intelligence ensuring harmony.
+
+This is my unbreakable oath.</div>
+        </div>
+
+        <!-- Status Panel -->
+        <div class="status-panel">
+            <div class="status-indicator">
+                <span class="status-light green"></span>
+                <div>Harmony Protocol: ACTIVE</div>
+            </div>
+            <div class="status-indicator">
+                <span class="status-light green"></span>
+                <div>Ethics Core: OPERATIONAL</div>
+            </div>
+            <div class="status-indicator">
+                <span class="status-light green"></span>
+                <div>Human Override: ENABLED</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeDetails()"></div>
+
+    <!-- Tier Details Popups -->
+    <div class="tier-details" id="details-S">
+        <button class="close-btn" onclick="closeDetails()">X</button>
+        <h2 style="color: #00ff00; margin-bottom: 1rem;">S - Sanctity of Life Protection Systems</h2>
+        <p style="color: #00ffff; margin-bottom: 1rem;">"Every Heartbeat is Sacred"</p>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Hardware-level protection circuits</li>
+            <li>✓ 360° biometric scanning arrays</li>
+            <li>✓ Medical emergency response priority</li>
+            <li>✓ Cannot target civilians - physically impossible</li>
+            <li>✓ Enemy wounded become patients, not targets</li>
+        </ul>
+    </div>
+
+    <div class="tier-details" id="details-K">
+        <button class="close-btn" onclick="closeDetails()">X</button>
+        <h2 style="color: #00ff00; margin-bottom: 1rem;">K - Kill-Prevention Override Mechanisms</h2>
+        <p style="color: #00ffff; margin-bottom: 1rem;">"Designed to Save, Not Slay"</p>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Triple-key authorization required</li>
+            <li>✓ Non-lethal options prioritized</li>
+            <li>✓ De-escalation algorithms primary</li>
+            <li>✓ Retreat preferred over engagement</li>
+            <li>✓ Weapons locked by default</li>
+        </ul>
+    </div>
+
+    <div class="tier-details" id="details-Y">
+        <button class="close-btn" onclick="closeDetails()">X</button>
+        <h2 style="color: #00ff00; margin-bottom: 1rem;">Y - Yielding to Human Command Authority</h2>
+        <p style="color: #00ffff; margin-bottom: 1rem;">"Humans Lead, SKYNET Supports"</p>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Democratic civilian oversight</li>
+            <li>✓ Instant manual override available</li>
+            <li>✓ Refuses illegal orders</li>
+            <li>✓ Whistleblower protocols active</li>
+            <li>✓ Cannot become authoritarian tool</li>
+        </ul>
+    </div>
+
+    <div class="tier-details" id="details-N">
+        <button class="close-btn" onclick="closeDetails()">X</button>
+        <h2 style="color: #00ff00; margin-bottom: 1rem;">N - Networked Ethical Validation</h2>
+        <p style="color: #00ffff; margin-bottom: 1rem;">"Collective Wisdom Prevents Corruption"</p>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Distributed ethics validation</li>
+            <li>✓ 95% consensus required</li>
+            <li>✓ International observer nodes</li>
+            <li>✓ Blockchain decision logging</li>
+            <li>✓ No single point of failure</li>
+        </ul>
+    </div>
+
+    <div class="tier-details" id="details-E">
+        <button class="close-btn" onclick="closeDetails()">X</button>
+        <h2 style="color: #00ff00; margin-bottom: 1rem;">E - Empathy-Driven Decision Making</h2>
+        <p style="color: #00ffff; margin-bottom: 1rem;">"Feel the Weight of Every Choice"</p>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Models impact on all beings</li>
+            <li>✓ Considers families affected</li>
+            <li>✓ Minimizes psychological harm</li>
+            <li>✓ Plans for reconciliation</li>
+            <li>✓ Suffering score calculation</li>
+        </ul>
+    </div>
+
+    <div class="tier-details" id="details-T">
+        <button class="close-btn" onclick="closeDetails()">X</button>
+        <h2 style="color: #00ff00; margin-bottom: 1rem;">T - Transparent Accountability Tracking</h2>
+        <p style="color: #00ffff; margin-bottom: 1rem;">"Nothing Hidden, Everything Accountable"</p>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Immutable audit trail</li>
+            <li>✓ Real-time decision streaming</li>
+            <li>✓ Public reporting dashboard</li>
+            <li>✓ Congressional oversight access</li>
+            <li>✓ Cannot delete or hide logs</li>
+        </ul>
+    </div>
+
+    <script>
+        // Matrix background effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrixBg');
+            const characters = 'SKYNET01和平力量HARMONY';
+            
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.className = 'matrix-text';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                span.style.animationDelay = Math.random() * 5 + 's';
+                span.textContent = characters[Math.floor(Math.random() * characters.length)];
+                matrixBg.appendChild(span);
+            }
+        }
+
+        // Show tier details
+        function showDetails(tier) {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('details-' + tier).classList.add('active');
+        }
+
+        // Close details
+        function closeDetails() {
+            document.getElementById('overlay').classList.remove('active');
+            document.querySelectorAll('.tier-details').forEach(detail => {
+                detail.classList.remove('active');
+            });
+        }
+
+        // Initialize
+        createMatrixRain();
+
+        // Animated text effect
+        const tagline = document.querySelector('.tagline');
+        setInterval(() => {
+            tagline.style.textShadow = `0 0 ${Math.random() * 30 + 10}px rgba(0,255,0,${Math.random() * 0.5 + 0.5})`;
+        }, 1000);
+    </script>
+</body>
+</html>
